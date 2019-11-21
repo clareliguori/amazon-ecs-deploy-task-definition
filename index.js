@@ -60,7 +60,7 @@ function undefinedOrNullReplacer(_, value) {
   return value;
 }
 
-async function cleanNullKeys(obj) {
+function cleanNullKeys(obj) {
   return JSON.parse(JSON.stringify(obj, undefinedOrNullReplacer));
 }
 
@@ -166,10 +166,6 @@ async function run() {
       path.join(process.env.GITHUB_WORKSPACE, taskDefinitionFile);
     const fileContents = fs.readFileSync(taskDefPath, 'utf8');
     const taskDefContents = cleanNullKeys(yaml.parse(fileContents));
-    core.debug("Uncleaned contents:");
-    core.debug(yaml.parse(fileContents));
-    core.debug("Cleaned contents: ");
-    core.debug(taskDefContents);
     const registerResponse = await ecs.registerTaskDefinition(taskDefContents).promise();
     const taskDefArn = registerResponse.taskDefinition.taskDefinitionArn;
     core.setOutput('task-definition-arn', taskDefArn);
